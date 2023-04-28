@@ -16,8 +16,8 @@ classificador.add(MaxPooling2D(pool_size=(2, 2)))
 
 classificador.add(Flatten())
 
-classificador.add(Dense(units=747, activation='relu'))
-classificador.add(Dense(units=747, activation='relu'))
+classificador.add(Dense(units=100, activation='relu'))
+classificador.add(Dense(units=100, activation='relu'))
 classificador.add(Dense(units=9, activation='softmax'))
 
 classificador.compile(
@@ -27,16 +27,18 @@ dados_treinamento = ImageDataGenerator(rescale=1./255)
 dados_teste = ImageDataGenerator(rescale=1./255)
 
 amostras_treinamento = dados_treinamento.flow_from_directory(
-    './training', target_size=(64, 64), batch_size=747, class_mode='categorical')
+    './training', target_size=(64, 64), batch_size=32, class_mode='categorical')
 
 amostras_teste = dados_teste.flow_from_directory(
-    './test', target_size=(64, 64), batch_size=83, class_mode='categorical')
+    './test', target_size=(64, 64), batch_size=32, class_mode='categorical')
 
-classificador.fit(amostras_treinamento, steps_per_epoch=16,
-                            epochs=5, validation_data=amostras_teste, validation_steps=80)
+classificador.fit(amostras_treinamento, steps_per_epoch=140,
+                            epochs=10, validation_data=amostras_teste, validation_steps=576)
 
-# dados_previsao = dados_treinamento.flow_from_directory(
-#     './previsao', target_size=(64, 64), batch_size=1, class_mode='categorical')
+classificador.save('classificador.h5')
 
-# previsao = classificador.predict(dados_previsao)
-# print(previsao)
+dados_previsao = dados_treinamento.flow_from_directory(
+    './previsao', target_size=(64, 64), batch_size=1, class_mode='categorical')
+
+previsao = classificador.predict(dados_previsao)
+print(previsao)
